@@ -1,113 +1,243 @@
-import Image from 'next/image'
+"use client"
+import { useState, useEffect } from 'react';
+import Header from '@/components/Header';
+import Image from 'next/image';
+import Loader from '@/components/Loader';
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+	const [productForm, setProductForm] = useState({})
+	const [products, setProducts] = useState([])
+	const [alert, setAlert] = useState('')
+	const [query, setQuery] = useState('')
+	const [loading, setLoading] = useState(false)
+	const [loadingaction, setLoadingaction] = useState(false)
+	const [dropdown, setDropdown] = useState([])
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+	useEffect(() => {
+		const fetchProducts = async () => {
+			const response = await fetch('/api/product')
+			let rjson = await response.json()
+			setProducts(rjson.products)
+		}
+		fetchProducts()
+	}, [])
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+	const addProduct = async (e) => {
+		e.preventDefault();
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+		try {
+			const response = await fetch('/api/product', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(productForm),
+			});
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+			if (response.ok) {
+				// Product added successfully, you can update the UI or perform additional actions.
+				console.log('Product added successfully');
+				setAlert('Your Product has been Added!')
+				setProductForm({})
+			} else {
+				// Handle errors here
+				console.error('Failed to add product');
+			}
+		} catch (error) {
+			console.error('Error:', error);
+		}
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+		// Fetch all the products again to sync back
+		const response = await fetch('/api/product')
+		let rjson = await response.json()
+		setProducts(rjson.products)
+	};
+
+	const handleChange = (e) => {
+		setProductForm({ ...productForm, [e.target.name]: e.target.value })
+	}
+
+	const onDropdownEdit = async (e) => {
+		let value = e.target.value
+		setQuery(value)
+		if (value.length > 3) {
+			setLoading(true)
+			setDropdown([])
+			const response = await fetch('/api/search?query=' + query)
+			let rjson = await response.json()
+			setDropdown(rjson.products)
+			setLoading(false)
+		}
+		else {
+			setDropdown([])
+		}
+	}
+
+	const buttonAction = async (action, slug, initialQuantity) => {
+		// Immediately change the quantity of the product with given slug in products
+		let index = products.findIndex((item) => item.slug == slug)
+		let newProducts = JSON.parse(JSON.stringify(products))
+		if (action == "plus") {
+			newProducts[index].quantity = parseInt(initialQuantity) + 1
+		}
+		else {
+			newProducts[index].quantity = parseInt(initialQuantity) - 1
+		}
+		setProducts(newProducts)
+
+		// Immediately change the quantity of the product with given slug in dropdown
+		let indexdrop = dropdown.findIndex((item) => item.slug == slug)
+		let newDropdown = JSON.parse(JSON.stringify(dropdown))
+		if (action == "plus") {
+			newDropdown[indexdrop].quantity = parseInt(initialQuantity) + 1
+			console.log(newDropdown[indexdrop].quantity)
+		}
+		else {
+			newDropdown[indexdrop].quantity = parseInt(initialQuantity) - 1
+		}
+		setDropdown(newDropdown)
+
+
+		console.log(action, slug);
+		setLoadingaction(true);
+
+		const response = await fetch('/api/action', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ action, slug, initialQuantity }),
+		});
+		let r = await response.json()
+		console.log(r)
+		setLoadingaction(false)
+	};
+
+
+	return (
+		<>
+			<Header />
+			<div className='text-green-800 text-center'>{alert}</div>
+			{/* Search Section */}
+			<div className="container mx-auto p-4 md:w-[70%] w-[90%] mb-6">
+				<h1 className="text-3xl font-semibold mb-4">Search a Product</h1>
+
+				{/* Search Input and Dropdown */}
+				<div className="flex items-center mb-2">
+					<input
+						// onBlur={() => { setDropdown([]) }}
+						type="text"
+						placeholder="Enter product name..."
+						onChange={onDropdownEdit}
+						className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline mr-2" />
+					<select
+						className="shadow appearance-none border rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline">
+						<option value="">All</option>
+						<option value="c1">Select Category</option>
+						<option value="c2">Select Category</option>
+					</select>
+				</div>
+				{loading && <Loader />}
+				<div className="dropcontainer absolute w-[65vw]  border-1 bg-slate-200 rounded-xl">
+					{dropdown.map(item => {
+						return <div key={item.slug} className='container flex justify-between  my-1 p-2 border-b-2 border-slate-200 '>
+							<span className="slug">{item.slug} ({item.quantity} available for ₹ {item.price})</span>
+
+							<div className="mx-5 ">
+								<button
+									onClick={() => { buttonAction("minus", item.slug, item.quantity) }}
+									disabled={loadingaction} // Ensure loadingaction is used to disable the button
+									className="substract bg-slate-400 text-gray-800 px-4 py-2 rounded-full shadow-md cursor-pointer hover:scale-105 transform transition-transform disabled:bg-slate-300"> -</button>
+
+
+								<span className="qualtity inline-block min-w-3  mx-3">{item.quantity}</span>
+
+								<button onClick={() => { buttonAction("plus", item.slug, item.quantity) }} disabled={loadingaction} className="add bg-slate-400 text-gray-800 px-4 py-2 rounded-full shadow-md cursor-pointer hover:scale-105 transform transition-transform disabled:bg-slate-300">+</button>
+
+
+
+							</div>
+						</div>
+					})}
+				</div>
+			</div >
+
+
+			{/* Display Current Stock */}
+			<div div className="container bg-[#FFFAFA] p-4 mx-auto md:w-[70%] w-[90%]" >
+
+				<h1 className="text-3xl font-semibold mb-4">Add a Product</h1>
+
+				{/* Input Form */}
+				<div className="mb-4">
+					<label className="block text-gray-700 text-sm font-bold mb-2">Product Slug</label>
+					<input
+						onChange={handleChange}
+						type="text"
+						name="slug"
+						value={productForm?.slug || ''}
+						className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+					/>
+				</div>
+				<div className="mb-4">
+					<label className="block text-gray-700 text-sm font-bold mb-2">Quantity</label>
+					<input
+						onChange={handleChange}
+						type="number"
+						name="quantity"
+						value={productForm?.quantity || ''}
+						className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+					/>
+				</div>
+				<div className="mb-4">
+					<label className="block text-gray-700 text-sm font-bold mb-2">Price</label>
+					<input
+						onChange={handleChange}
+						type="number"
+						step="0.01"
+						name="price"
+						value={productForm?.price || ''}
+						className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+					/>
+				</div>
+				<button
+					onClick={addProduct}
+					className="bg-gradient-to-r from-gray-800 to-slate-700 hover:from-slate-700 hover:to-gray-900 text-white font-bold py-2 px-4 rounded-md transition duration-300 ease-in-out disabled:bg-gray-400">
+					Add Product
+				</button>
+
+
+
+
+
+
+				<div className="container bg-[#FFFFF0] mx-auto md:w-[70%] w-[90%] my-8">
+					<h1 className="text-3xl font-bold mb-4">Display Current Stock</h1>
+
+					{/* Table to display stock */}
+					<table className="table-auto w-full mt-4">
+						<thead>
+							<tr>
+								<th className="px-4 py-2">Product Name</th>
+								<th className="px-4 py-2">Quantity</th>
+								<th className="px-4 py-2">Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							{products.map(product => {
+								return <tr key={product.slug}>
+									<td className="border px-4 py-2">{product.slug}</td>
+									<td className="border px-4 py-2">{product.quantity}</td>
+									<td className="border px-4 py-2">₹ {product.price}</td>
+								</tr>
+							})}
+
+						</tbody>
+					</table>
+
+
+				</div>
+			</div>
+		</>
+	);
 }
